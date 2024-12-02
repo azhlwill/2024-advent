@@ -20,6 +20,7 @@ public class part2 {
         if (isSafe(line)){
           safeCount++;
         }
+        System.out.println(line + " " + isSafe(line));
       }
       System.out.println(safeCount);
 
@@ -37,7 +38,7 @@ public class part2 {
     String[] stringLevels = line.split(" ");
     int lineLength = stringLevels.length;
     int[] levels = new int[lineLength];
-    
+
     int problems = 0;
 
     for (int i = 0; i < lineLength; i++){
@@ -56,12 +57,23 @@ public class part2 {
 
       if (adjDiff < 0){
         increasing = false;
-      } 
+      }
       else if (adjDiff > 0){
         decreasing = false;
       }
+
+      if (increasing && decreasing){
+        problems++;
+      }
+      else if (!increasing && !decreasing){
+        problems++;
+      }
     }
-    return ((increasing || decreasing) && (problems < 2));
+
+
+
+    System.out.println(problems);
+    return (problems < 2);
 
   }
 }
