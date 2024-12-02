@@ -17,10 +17,33 @@ public class part2 {
       int safeCount = 0;
       while (input.hasNextLine()){
         String line = input.nextLine();
-        if (isSafe(line)){
-          safeCount++;
+        String[] stringLevels = line.split(" ");
+        ArrayList<Integer> levels = new ArrayList<Integer>();
+
+        for (int i = 0; i < stringLevels.length; i++){
+          levels.add(Integer.parseInt(stringLevels[i])); // put everything in
         }
-        System.out.println(line + " " + isSafe(line));
+///////
+        if (isSafe(levels)){ // no need for removal
+          safeCount++; 
+        }
+        else{ // u only need to see if any removal can fix it
+          boolean safeRemoval = false; // might get switched if one removal can fix it
+          for (int i = 0; i < levels.size(); i++){ // every possible removal
+            int temp = levels.get(i); // need to put back later
+            levels.remove(i); // get rid of it
+
+            if (isSafe(levels)){
+              safeRemoval = true; // removal worked
+            }
+
+            levels.add(i, temp); // put it back so it doesnt affect the next removals
+          }
+
+          if (safeRemoval){ // problem dampener
+            safeCount++;
+          }
+        }
       }
       System.out.println(safeCount);
 
@@ -34,46 +57,28 @@ public class part2 {
     return -100;
   }
 
-  private static boolean isSafe(String line){
-    String[] stringLevels = line.split(" ");
-    int lineLength = stringLevels.length;
-    int[] levels = new int[lineLength];
-
-    int problems = 0;
-
-    for (int i = 0; i < lineLength; i++){
-      levels[i] = Integer.parseInt(stringLevels[i]);
-    }
+  
+  private static boolean isSafe(ArrayList<Integer> levels){
 
     boolean increasing = true;
     boolean decreasing = true;
 
-    for (int j = 1; j < levels.length; j++){
-      int adjDiff = levels[j] - levels[j-1];
+    for (int j = 1; j < levels.size(); j++){
+      int adjDiff = levels.get(j) - levels.get(j-1);
 
-      if (Math.abs(adjDiff) < 1 || Math.abs(adjDiff) > 3){
-        problems++;
+      if (Math.abs(adjDiff) < 1 || Math.abs(adjDiff) > 3){ // between 1 and 3
+        return false;
       }
 
       if (adjDiff < 0){
-        increasing = false;
-      }
+        increasing = false; // means theres a sequence of 2 numbers that go down
+      } 
       else if (adjDiff > 0){
-        decreasing = false;
-      }
-
-      if (increasing && decreasing){
-        problems++;
-      }
-      else if (!increasing && !decreasing){
-        problems++;
+        decreasing = false; // sequence of 2 numbers that are going up
       }
     }
-
-
-
-    System.out.println(problems);
-    return (problems < 2);
+    return increasing || decreasing; // should only be 1 true for a safe report
 
   }
+    
 }
